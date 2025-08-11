@@ -1,0 +1,25 @@
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Maven
+target/
+
+# Gradle
+build/
+.gradle
+
+# IntelliJ IDEA
+.idea/
+out/
+*.iml
+
+# Mac
+.DS_Store
