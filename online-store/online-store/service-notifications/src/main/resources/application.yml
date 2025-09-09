@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: service-notifications
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      group-id: notifications-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.use.type.headers: false
+        spring.json.trusted.packages: "*"
+        spring.json.value.default.type: com.example.dto.OrderShippedEvent
+    listener:
+      common-error-handler: errorHandlerom.example.dto.OrderShippedEvent

@@ -1,0 +1,57 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.2.1
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:7.2.1
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka:29092,LISTENER_DOCKER_EXTERNAL://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CREATE_TOPICS: "new_orders:3:1,payed_orders:3:1,sent_orders:2:1"
+
+  service-orders:
+    container_name: service-orders
+    build:
+      context: ./service-orders
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - kafka
+
+  service-payment:
+    container_name: service-payment
+    build:
+      context: ./service-payment
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+
+  service-shipping:
+    container_name: service-shipping
+    build:
+      context: ./service-shipping
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+
+  service-notifications:
+    container_name: service-notifications
+    build:
+      context: ./service-notifications
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
